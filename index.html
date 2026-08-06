@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+
+<html data-theme="light" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="#f5f7fb" name="theme-color"/>
+<title>FocusFlow | Plan, Focus, Repeat</title>
+<script>
+    (() => {
+      const saved = localStorage.getItem("focusflow_theme");
+      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      document.documentElement.dataset.theme = saved || (prefersDark ? "dark" : "light");
+    })();
+  </script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="style.css" rel="stylesheet"/>
+</head>
+<body>
+<main class="app-shell">
+<header class="app-header">
+<div class="brand-block">
+<div aria-hidden="true" class="brand-mark">F</div>
+<div>
+<p class="eyebrow">PERSONAL PRODUCTIVITY</p>
+<h1>FocusFlow</h1>
+</div>
+</div>
+<div class="header-actions">
+<div aria-label="Current date" class="date-chip">
+<span id="currentDay">Today</span>
+<strong id="currentDate">Date</strong>
+</div>
+<button aria-label="Switch theme" class="icon-text-button" id="themeToggle" type="button">
+<span aria-hidden="true" id="themeIcon">☾</span>
+<span id="themeActionLabel">Dark mode</span>
+</button>
+</div>
+</header>
+<section aria-labelledby="overviewTitle" class="overview-card">
+<div class="overview-copy">
+<p class="eyebrow" id="greeting">GOOD DAY</p>
+<h2 id="overviewTitle">Make today count.</h2>
+<p id="overviewMessage">Add your first task or habit, then start a focused session.</p>
+<div aria-label="Quick actions" class="quick-actions">
+<button class="primary-button" data-jump="taskTitle" type="button">+ Add task</button>
+<button class="secondary-button" data-jump="habitName" type="button">+ Add habit</button>
+<button class="secondary-button" data-jump="focusStartPause" type="button">▶ Start focus</button>
+</div>
+</div>
+<div aria-label="Today's progress: 0 percent" class="progress-ring" id="todayProgressRing" role="img" style="--progress: 0">
+<div>
+<strong id="todayProgressText">0%</strong>
+<span>Today</span>
+</div>
+</div>
+<div class="overview-metrics">
+<article><span>Tasks for today</span><strong id="todayTaskMetric">0</strong><small id="todayTaskMetricSub">Nothing due</small></article>
+<article><span>Habits</span><strong id="todayHabitMetric">0/0</strong><small id="todayHabitMetricSub">Add a daily routine</small></article>
+<article><span>Focus goal</span><strong><span id="todayFocusMetric">0</span>/<span id="focusGoalMetric">120</span>m</strong><small id="todayFocusMetricSub">Start one session</small></article>
+</div>
+</section>
+<section class="workspace-grid"><div class="main-stack"><article aria-labelledby="tasksTitle" class="panel tasks-panel">
+<div class="panel-heading"><div><p class="section-label">PLAN</p><h2 id="tasksTitle">Study Tasks</h2><p class="helper-text">Put urgent work first. Overdue and today’s tasks appear at the top.</p></div><button class="text-button" id="clearCompletedTasks" type="button">Clear completed</button></div>
+<form class="quick-form task-quick-form" id="taskForm">
+<div class="field field-wide"><label for="taskTitle">What do you need to finish?</label><input id="taskTitle" maxlength="90" placeholder="Example: Solve 20 gravitation questions" required="" type="text"/></div>
+<div class="field"><label for="taskSubject">Subject</label><input id="taskSubject" list="subjectSuggestions" maxlength="40" placeholder="Physics" required="" type="text"/><datalist id="subjectSuggestions"><option value="Physics"></option><option value="Chemistry"></option><option value="Mathematics"></option><option value="Computer Science"></option><option value="English"></option></datalist></div>
+<div class="field"><label for="taskDueDate">Due</label><select aria-label="Choose a due date shortcut" id="taskDuePreset"><option value="today">Today</option><option value="tomorrow">Tomorrow</option><option value="week">In 7 days</option><option value="custom">Choose date</option></select><input aria-label="Custom due date" class="custom-date-input" hidden="" id="taskDueDate" type="date"/></div>
+<div class="field"><label for="taskPriority">Priority</label><select id="taskPriority"><option value="low">Low</option><option selected="" value="medium">Medium</option><option value="high">High</option></select></div><button class="primary-button add-button" type="submit">Add task</button></form>
+<div class="toolbar"><div aria-label="Filter tasks" class="segmented-control" role="group"><button class="segment active" data-filter="today" type="button">Today</button><button class="segment" data-filter="upcoming" type="button">Upcoming</button><button class="segment" data-filter="all" type="button">All</button><button class="segment" data-filter="completed" type="button">Done</button></div><span class="list-count" id="visibleTaskCount">0 tasks</span></div>
+<div aria-live="polite" class="item-list" id="taskList"></div><div class="empty-state" id="emptyTaskMessage"><div aria-hidden="true" class="empty-icon">✓</div><h3>Your day is clear</h3><p>Add one specific task above. Keep the title action-based, such as “Revise chapter 3”.</p><button class="example-chip" data-example-task="Revise one Physics topic" type="button">Use an example</button></div>
+</article><article aria-labelledby="habitsTitle" class="panel habits-panel">
+<div class="panel-heading compact-heading"><div><p class="section-label">REPEAT</p><h2 id="habitsTitle">Daily Habits</h2></div><span class="status-pill" id="habitHeaderProgress">0/0</span></div>
+<p class="helper-text habits-helper">Check each routine once when it is done for today.</p>
+<form class="habit-form" id="habitForm"><div class="field field-grow"><label for="habitName">New habit</label><input id="habitName" maxlength="70" placeholder="Example: Read for 20 minutes" required="" type="text"/></div><div class="field schedule-field"><label for="habitSchedule">Schedule</label><select id="habitSchedule"><option value="daily">Every day</option><option value="weekdays">Weekdays</option><option value="weekends">Weekends</option></select></div><button class="primary-button habit-add-button" type="submit">Add</button></form>
+<div aria-live="polite" class="item-list habit-list" id="habitList"></div><div class="empty-state compact-empty" id="emptyHabitMessage"><div aria-hidden="true" class="empty-icon">↻</div><h3>Build one repeatable routine</h3><p>Start small enough that you can complete it even on a busy day.</p><div class="example-row"><button class="example-chip" data-example-habit="Read for 20 minutes" type="button">Reading</button><button class="example-chip" data-example-habit="Revise for 30 minutes" type="button">Revision</button></div></div>
+<section aria-label="Habit activity for the last seven days" class="week-section" hidden="" id="weekSection"><div class="week-heading"><span>Last 7 days</span><strong id="weekCompletionText">0% complete</strong></div><div class="week-activity" id="weekActivity"></div></section>
+</article></div><aside class="side-stack"><article aria-labelledby="focusTitle" class="panel focus-panel">
+<div class="panel-heading compact-heading"><div><p class="section-label">FOCUS</p><h2 id="focusTitle">Focus Timer</h2></div><span class="status-pill" id="focusStatus">Ready</span></div>
+<label class="field compact-field" for="focusTaskSelect"><span>Work on</span><select id="focusTaskSelect"><option value="">General study session</option></select></label>
+<div class="timer-display"><strong id="focusClock">25:00</strong><span id="timerHint">One task. No switching.</span></div>
+<div aria-label="Choose focus duration" class="timer-presets" role="group"><button class="timer-preset active" data-minutes="25" type="button">25m</button><button class="timer-preset" data-minutes="45" type="button">45m</button><button class="timer-preset" data-minutes="60" type="button">60m</button><button class="timer-preset" data-minutes="90" type="button">90m</button></div>
+<div class="timer-controls"><button class="primary-button" id="focusStartPause" type="button">Start focus</button><button class="secondary-button" id="focusReset" type="button">Reset</button></div>
+<div class="focus-goal-row"><div><span>Daily focus goal</span><strong><span id="focusMinutesToday">0</span>/<span id="focusGoalDisplay">120</span> min</strong></div><label><span class="sr-only">Daily focus goal in minutes</span><input id="focusGoalInput" max="600" min="15" step="15" type="number" value="120"/></label></div><div aria-hidden="true" class="mini-progress"><div id="focusGoalBar"></div></div>
+</article><article aria-labelledby="milestoneTitle" class="panel milestone-panel"><div class="milestone-summary"><div><p class="section-label">NEXT MILESTONE</p><h2 id="milestoneTitle">No exam or deadline set</h2><p class="helper-text" id="milestoneDateText">Add one important date so you always know what you are working towards.</p></div><div aria-live="polite" class="milestone-countdown"><div><strong id="countdownDays">--</strong><span>days</span></div><div><strong id="countdownHours">--</strong><span>hours</span></div><div><strong id="countdownMinutes">--</strong><span>mins</span></div></div><button class="secondary-button" id="toggleMilestoneForm" type="button">Set milestone</button></div><form class="milestone-form" hidden="" id="countdownForm"><div class="field field-grow"><label for="countdownName">Milestone name</label><input id="countdownName" maxlength="60" placeholder="Example: Physics unit test" required="" type="text"/></div><div class="field"><label for="countdownDate">Date and time</label><input id="countdownDate" required="" type="datetime-local"/></div><button class="primary-button" type="submit">Save</button><button class="text-button danger-text" hidden="" id="clearCountdown" type="button">Remove</button></form></article>
+<article aria-labelledby="reviewTitle" class="panel review-panel"><div class="panel-heading compact-heading"><div><p class="section-label">WEEKLY VIEW</p><h2 id="reviewTitle">Your consistency</h2></div><strong class="weekly-score" id="weeklyScore">0%</strong></div><div aria-label="Seven day productivity overview" class="weekly-bars" id="weeklyBars"></div><p class="helper-text review-message" id="weeklyMessage">Complete a task, habit or focus session to start your weekly view.</p></article></aside></section>
+</main>
+<template id="taskTemplate"><article class="tracker-item task-item"><label class="check-wrap" title="Mark task complete"><input class="task-check" type="checkbox"/><span aria-hidden="true" class="custom-check"></span></label><div class="item-main"><div class="item-title-row"><h3 class="item-title"></h3><span class="priority-badge"></span></div><div class="meta-row"><p class="item-meta"></p><span class="due-chip"></span></div><div class="task-focus-row" hidden=""><span class="task-focus-label"></span></div></div><div class="item-actions"><button aria-label="Focus on this task" class="icon-button focus-task" title="Start focus on this task" type="button">▶</button><button aria-label="Edit task" class="icon-button edit-task" title="Edit task" type="button">✎</button><button aria-label="Delete task" class="icon-button delete-task" title="Delete task" type="button">×</button></div></article></template>
+<template id="habitTemplate"><article class="tracker-item habit-item"><label class="check-wrap" title="Complete for today"><input class="habit-check" type="checkbox"/><span aria-hidden="true" class="custom-check"></span></label><div class="item-main"><h3 class="item-title"></h3><p class="item-meta habit-streak"></p></div><div class="item-actions"><button aria-label="Edit habit" class="icon-button edit-habit" title="Edit habit" type="button">✎</button><button aria-label="Delete habit" class="icon-button delete-habit" title="Delete habit" type="button">×</button></div></article></template>
+<dialog class="edit-dialog" id="editDialog"><form id="editForm" method="dialog"><div class="dialog-heading"><div><p class="section-label">EDIT</p><h2 id="editDialogTitle">Edit item</h2></div><button aria-label="Close" class="icon-button" id="closeDialog" type="button">×</button></div><div class="dialog-fields" id="editFields"></div><div class="dialog-actions"><button class="secondary-button" id="cancelEdit" type="button">Cancel</button><button class="primary-button" type="submit">Save changes</button></div></form></dialog>
+<div aria-live="polite" class="toast" id="toast" role="status"></div><script src="script.js"></script>
+</body></html>
